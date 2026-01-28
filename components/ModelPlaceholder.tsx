@@ -24,6 +24,18 @@ const LightRays = dynamic(() => import('./LightRays'), {
 export default function ModelPlaceholder() {
   const ref = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -113,8 +125,8 @@ export default function ModelPlaceholder() {
         }}
       />
 
-      {/* Centered frame container - Shifted slightly right */}
-      <div className="relative w-full max-w-6xl mx-auto px-6" style={{ zIndex: 10, marginLeft: 'calc(50% + 20px)', transform: 'translateX(-50%)' }}>
+      {/* Centered frame container - Properly centered with flex */}
+      <div className="relative w-full max-w-6xl mx-auto px-6" style={{ zIndex: 10 }}>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -123,22 +135,22 @@ export default function ModelPlaceholder() {
             duration: 1, 
             ease: [0.22, 1, 0.36, 1],
           }}
-          className="relative aspect-[4/3] w-full"
+          className="relative w-full h-[80vh] md:aspect-[4/3] md:h-auto"
           style={{ willChange: 'transform, opacity' }}
         >
           {/* Invisible frame - for positioning only */}
           <div className="absolute inset-0 rounded-3xl" />
           
-          {/* 3D Model Container */}
+          {/* 3D Model Container - Optimized for mobile */}
           <div 
             className="absolute inset-0 rounded-3xl overflow-hidden"
             style={{ 
-              transform: 'translateZ(0)', // Force GPU acceleration
+              transform: 'translateZ(0)', // Just GPU acceleration, no scaling
               backfaceVisibility: 'hidden', // Prevent flicker
               zIndex: 10, // Above stage glow
             }}
           >
-            <TshirtModel scrollProgress={scrollProgress} />
+            <TshirtModel scrollProgress={scrollProgress} isMobile={isMobile} />
           </div>
         </motion.div>
       </div>
