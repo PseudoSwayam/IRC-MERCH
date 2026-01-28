@@ -24,6 +24,9 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: 'IRC Merchandise | ITER Robotics Club',
   description: 'Official merchandise launch for ITER Robotics Club',
+  icons: {
+    icon: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({
