@@ -16,6 +16,7 @@ function ModelPlaceholder() {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [nameValue, setNameValue] = useState('')
+  const [yearValue, setYearValue] = useState('')
   const [selectedSize, setSelectedSize] = useState('')
   const [customSize, setCustomSize] = useState('')
   const [showCustomSizeInput, setShowCustomSizeInput] = useState(false)
@@ -42,6 +43,7 @@ function ModelPlaceholder() {
   const openModal = (product: any) => {
     setSelectedProduct(product)
     setNameValue('')
+    setYearValue('')
     setSelectedSize('')
     setCustomSize('')
     setShowCustomSizeInput(false)
@@ -56,6 +58,7 @@ function ModelPlaceholder() {
     setOrderDetails({
       product: selectedProduct,
       name: nameValue,
+      year: yearValue,
       size: finalSize
     })
     setSelectedProduct(null) // Close product modal
@@ -78,6 +81,7 @@ function ModelPlaceholder() {
     try {
       const result = await submitOrder({
         name: orderDetails.name,
+        year: orderDetails.year,
         size: orderDetails.size,
         transactionId: transactionId,
         merchType: orderDetails.product.id, // 'tshirt' or 'jacket'
@@ -92,6 +96,7 @@ function ModelPlaceholder() {
           setOrderSuccess(false)
           // Reset all form states
           setNameValue('')
+          setYearValue('')
           setSelectedSize('')
           setCustomSize('')
           setShowCustomSizeInput(false)
@@ -441,6 +446,43 @@ function ModelPlaceholder() {
                       </div>
                     </motion.div>
 
+                    {/* Year Selection */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.55, duration: 0.6 }}
+                    >
+                      <label className="flex items-center gap-3 text-white font-semibold mb-3 text-sm">
+                        <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/30">
+                          <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        Year
+                      </label>
+                      <div className="relative group">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/30 to-cyan-400/30 rounded-xl opacity-0 group-focus-within:opacity-100 blur-sm transition-opacity duration-500" />
+                        
+                        <select
+                          value={yearValue}
+                          onChange={(e) => setYearValue(e.target.value)}
+                          className="relative w-full px-4 py-3 bg-black border border-blue-500/30 rounded-xl text-cyan-100 focus:border-cyan-400/60 focus:outline-none focus:ring-1 focus:ring-cyan-400/30 transition-all duration-300 backdrop-blur-xl hover:border-blue-400/40 appearance-none cursor-pointer"
+                        >
+                          <option value="" disabled className="bg-gray-900 text-gray-500">Select your year</option>
+                          <option value="2nd Year" className="bg-gray-900 text-cyan-100">2nd Year</option>
+                          <option value="3rd Year" className="bg-gray-900 text-cyan-100">3rd Year</option>
+                          <option value="4th Year" className="bg-gray-900 text-cyan-100">4th Year</option>
+                        </select>
+                        
+                        {/* Custom dropdown arrow */}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </motion.div>
+
                     {/* Size Selection */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -530,15 +572,15 @@ function ModelPlaceholder() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.7, duration: 0.6 }}
                       onClick={handleGrabYours}
-                      disabled={!nameValue || (!selectedSize || (selectedSize === 'Other' && !customSize))}
+                      disabled={!nameValue || !yearValue || (!selectedSize || (selectedSize === 'Other' && !customSize))}
                       className="relative w-full group overflow-hidden mt-8"
-                      whileHover={{ scale: nameValue && selectedSize && (selectedSize !== 'Other' || customSize) ? 1.02 : 1 }}
-                      whileTap={{ scale: nameValue && selectedSize && (selectedSize !== 'Other' || customSize) ? 0.98 : 1 }}
+                      whileHover={{ scale: nameValue && yearValue && selectedSize && (selectedSize !== 'Other' || customSize) ? 1.02 : 1 }}
+                      whileTap={{ scale: nameValue && yearValue && selectedSize && (selectedSize !== 'Other' || customSize) ? 0.98 : 1 }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity blur-lg" />
                       
                       <div className={`relative flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-lg transition-all duration-300 ${
-                        nameValue && selectedSize && (selectedSize !== 'Other' || customSize)
+                        nameValue && yearValue && selectedSize && (selectedSize !== 'Other' || customSize)
                           ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30 border border-cyan-400/30'
                           : 'bg-black/50 text-gray-600 cursor-not-allowed border border-blue-500/20'
                       }`}>

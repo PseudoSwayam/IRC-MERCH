@@ -3,6 +3,7 @@ import { db } from './firebase';
 
 export interface OrderData {
   name: string;
+  year?: string;
   size: string;
   transactionId: string;
   merchType?: string;
@@ -24,6 +25,7 @@ export async function submitOrder(orderData: OrderData): Promise<OrderResponse> 
     // Prepare order document
     const orderDocument = {
       name: orderData.name,
+      ...(orderData.year && { year: orderData.year }), // Only add year if provided (backward compatibility)
       size: orderData.size,
       transactionId: orderData.transactionId,
       merchType: orderData.merchType || 'tshirt', // Default to tshirt for backward compatibility
