@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useRef, useState, useCallback, memo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -10,8 +10,7 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { submitOrder } from '@/lib/orderService'
 
-const TshirtModel = dynamic(() => import('./TshirtModel'), { ssr: false })
-const Threads = dynamic(() => import('./Threads'), { ssr: false })
+const TshirtModel = dynamic(() => import('./TshirtModel'), { ssr: false, loading: () => null })
 
 const orderSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name is too long'),
@@ -32,7 +31,7 @@ const SIZES = [
   { size: 'XXL', measurement: '44' },
 ]
 
-export default function OrderForm() {
+function OrderForm() {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, amount: 0.2 })
   const [showQRModal, setShowQRModal] = useState(false)
@@ -56,7 +55,7 @@ export default function OrderForm() {
   const sizeValue = watch('size')
   const transactionIdValue = watch('transactionId')
 
-  const onSubmit = async (data: OrderFormData) => {
+  const onSubmit = useCallback(async (data: OrderFormData) => {
     setIsSubmitting(true)
     setSubmitError(null)
 
@@ -88,13 +87,13 @@ export default function OrderForm() {
     } finally {
       setIsSubmitting(false)
     }
-  }
+  }, [reset, ref])
 
-  const handleShowQR = () => {
+  const handleShowQR = useCallback(() => {
     if (nameValue && sizeValue) {
       setShowQRModal(true)
     }
-  }
+  }, [nameValue, sizeValue])
 
   return (
     <section
@@ -102,16 +101,6 @@ export default function OrderForm() {
       className="relative min-h-screen overflow-hidden py-20"
       style={{ backgroundColor: '#000000' }}
     >
-      {/* Threads Background Effect */}
-      <div className="absolute inset-0 opacity-20" style={{ zIndex: 1 }}>
-        <Threads
-          color={[0.4, 0.85, 1.0]} // Ice blue matching smoke (#66D9FF)
-          amplitude={0.6}
-          distance={0.05}
-          enableMouseInteraction
-        />
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -519,3 +508,5 @@ export default function OrderForm() {
     </section>
   )
 }
+
+export default memo(OrderForm)

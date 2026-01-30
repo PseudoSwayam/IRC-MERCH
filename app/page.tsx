@@ -10,12 +10,7 @@ const GL = dynamic(() => import('@/gl/index').then(mod => ({ default: mod.GL }))
 })
 
 const ModelPlaceholder = dynamic(() => import('@/components/ModelPlaceholder'), {
-  loading: () => null,
-  ssr: false
-})
-
-const OrderForm = dynamic(() => import('@/components/OrderForm'), {
-  loading: () => null,
+  loading: () => <div className="min-h-screen" />,
   ssr: false
 })
 
@@ -34,9 +29,6 @@ export default function Home() {
         
         {/* 3D Model Placeholder Section */}
         <ModelPlaceholder />
-        
-        {/* Order Form Section */}
-        <OrderForm />
       </div>
     </main>
   )

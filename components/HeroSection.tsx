@@ -2,9 +2,9 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-import { useRef } from 'react'
+import { useRef, memo } from 'react'
 
-export default function HeroSection() {
+function HeroSection() {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -79,28 +79,30 @@ export default function HeroSection() {
               <span className="px-4 py-1.5 border border-gray-800 rounded-full">Exclusive</span>
             </div>
           </motion.div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 1 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
-          >
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="flex flex-col items-center gap-2 text-gray-600"
-            >
-              <span className="text-xs font-mono uppercase tracking-widest">Scroll</span>
-              <ChevronDown className="w-4 h-4" />
-            </motion.div>
-          </motion.div>
         </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10"
+      >
+        <motion.div
+          animate={{ y: [0, 12, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-2 text-gray-600"
+        >
+          <span className="text-xs font-mono uppercase tracking-widest">Scroll</span>
+          <ChevronDown className="w-4 h-4" />
+        </motion.div>
+      </motion.div>
 
       {/* Noise texture overlay */}
       <div className="absolute inset-0 grain opacity-30 pointer-events-none" />
     </motion.section>
   )
 }
+
+export default memo(HeroSection)

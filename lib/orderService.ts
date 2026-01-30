@@ -5,6 +5,7 @@ export interface OrderData {
   name: string;
   size: string;
   transactionId: string;
+  merchType?: string;
   timestamp?: Timestamp;
   status?: 'pending' | 'confirmed' | 'processing' | 'completed';
 }
@@ -25,6 +26,7 @@ export async function submitOrder(orderData: OrderData): Promise<OrderResponse> 
       name: orderData.name,
       size: orderData.size,
       transactionId: orderData.transactionId,
+      merchType: orderData.merchType || 'tshirt', // Default to tshirt for backward compatibility
       status: 'pending' as const,
       timestamp: serverTimestamp(),
       createdAt: new Date().toISOString(), // Fallback timestamp
